@@ -134,6 +134,8 @@ def github_notification():
 
     html_url = pull_request["html_url"]
 
+    merge_base = pull_request["base"]["ref"]
+
     for sha in shas:
         github.update_status(current_app,
                              repo_config,
@@ -147,6 +149,7 @@ def github_notification():
                                repo_config,
                                head_repo_name,
                                sha,
-                               html_url)
+                               html_url,
+                               merge_base)
 
     return Response(status=204)

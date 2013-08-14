@@ -7,7 +7,8 @@ build_path = "/job/{job_name}/buildWithParameters"\
     "?GIT_BASE_REPO={git_base_repo}" \
     "&GIT_HEAD_REPO={git_head_repo}" \
     "&GIT_SHA1={git_sha1}" \
-    "&GITHUB_URL={github_url}"
+    "&GITHUB_URL={github_url}" \
+    "&GIT_MERGE_REF={git_merge_ref}"
 
 
 def get_jenkins_auth(app, repo_config):
@@ -23,7 +24,7 @@ def get_jenkins_url(app, repo_config):
     return repo_config.get("jenkins_url", app.config["JENKINS_URL"])
 
 
-def schedule_build(app, repo_config, head_repo_name, sha, html_url):
+def schedule_build(app, repo_config, head_repo_name, sha, html_url, merge_base):
     base_repo_name = repo_config["github_repo"]
     job_name = repo_config["jenkins_job_name"]
 
@@ -32,7 +33,8 @@ def schedule_build(app, repo_config, head_repo_name, sha, html_url):
                           git_base_repo=base_repo_name,
                           git_head_repo=head_repo_name,
                           git_sha1=sha,
-                          github_url=html_url)
+                          github_url=html_url,
+                          git_merge_ref=merge_base)
 
     logging.debug("Requesting build from Jenkins: %s", url)
     response = requests.post(url, auth=get_jenkins_auth(app, repo_config))
